@@ -7,25 +7,37 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.methods.GetMethod;
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
 import de.devsurf.injection.guice.annotations.Bind;
 import de.devsurf.injection.guice.configuration.Configuration;
 import de.devsurf.injection.guice.configuration.PathConfig;
+import de.devsurf.injection.guice.configuration.Configuration.Type;
 
 @Bind(multiple=true)
-@Configuration(name=@Named("urls"), location=@PathConfig("/urls.properties"))
+@Configuration(name=@Named("urls"), location=@PathConfig("/urls.properties"), type=Type.BOTH)
 public class URLPublisher extends WieIstMeineIP{
 	private static final Logger LOGGER = Logger.getLogger(URLPublisher.class.getName());
 
 	public static final String URL_CONFIG_COUNT = "url.count";
 	public static final String URL_CONFIG_ELEMENT = "url.";
 	
+	@Inject(optional=true) @Named("bitly.username")
+	private String username;
+	@Inject(optional=true) @Named("bitly.apikey")
+	private String apiKey;
+	@Inject(optional=true) @Named("url.shorten")
+	private boolean shorten;
+	
 	private List<String> urls;
 	
 	@Inject
-	public void init(@Named("urls") Properties configuration) {
+	public void init(@Named("urls") Properties configuration) throws IOException {
 		String filterCountStr = configuration.getProperty(URL_CONFIG_COUNT, "0");
 		int count;
 		try {
@@ -48,6 +60,9 @@ public class URLPublisher extends WieIstMeineIP{
 			String ip = getOwnIP();
 			for (String url : urls) {
 				url = url.replace("${IP}", ip);
+				if(shorten){
+					url = shorten(url);
+				}
 				tweets.add(url);
 			}
 			return tweets;
@@ -57,6 +72,20 @@ public class URLPublisher extends WieIstMeineIP{
 		}
 	}
 	
+	protected String shorten(String url) throws IOException {
+		HttpClient client = new HttpClient();
+		GetMethod gm = new GetMethod("http://api.bit.ly/v3/shorten");
+		gm.setQueryString("login="+username+"&apiKey="+apiKey+"&longUrl="+url+"&format=txt");
+
+		int status = client.executeMethod(gm);
+		if (status == HttpStatus.SC_OK) {
+			String html = gm.getResponseBodyAsString();
+
+			return html;
+		} else {
+			throw new IOException("wieistmeineip.de has returned a wrong status: " + status);
+		}
+	}
 
 	@Override
 	public CronFormat schedule() {
