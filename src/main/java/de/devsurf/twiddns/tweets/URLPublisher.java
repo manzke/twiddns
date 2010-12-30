@@ -20,7 +20,7 @@ import de.devsurf.injection.guice.configuration.PathConfig;
 import de.devsurf.injection.guice.configuration.Configuration.Type;
 
 @Bind(multiple=true)
-@Configuration(name=@Named("urls"), location=@PathConfig("/urls.properties"), type=Type.BOTH)
+@Configuration(name=@Named("urls"), location=@PathConfig("/urls.properties"), alternative=@PathConfig("/urls.override.properties"), type=Type.BOTH)
 public class URLPublisher extends WieIstMeineIP{
 	private static final Logger LOGGER = Logger.getLogger(URLPublisher.class.getName());
 

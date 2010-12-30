@@ -29,9 +29,9 @@ import de.devsurf.injection.guice.scanner.StartupModule;
 import de.devsurf.injection.guice.scanner.asm.ASMClasspathScanner;
 import de.devsurf.twiddns.connect.AccessTokenProvider;
 
-@Configuration(location=@PathConfig("/configuration.properties"), type=Type.VALUES)
-public class TwitterPublisher {
-	private static final Logger LOGGER = Logger.getLogger(TwitterPublisher.class.getName());
+@Configuration(location=@PathConfig("/configuration.properties"), alternative=@PathConfig("/configuration.override.properties"), type=Type.VALUES)
+public class Publisher {
+	private static final Logger LOGGER = Logger.getLogger(Publisher.class.getName());
 	private static final String CONSUMER_KEY = "sYMke2xPv6YWlP6O0TUeg";
 	private static final String CONSUMER_SECRET = "CQbjmMw3EtCKxzzXZeqdPCVWDQoBETxJlusTu0hEAs";
 
@@ -56,7 +56,7 @@ public class TwitterPublisher {
 	});
 	
 	@Inject
-	public TwitterPublisher(Set<Tweeter> implementations, AccessTokenProvider provider) {
+	public Publisher(Set<Tweeter> implementations, AccessTokenProvider provider) {
 		super();
 		this.tweeters = new ArrayList<Tweeter>(implementations);
 		this.token = provider.get();
@@ -79,11 +79,11 @@ public class TwitterPublisher {
 	
 	public static void main(String[] args) throws Exception {
 		StartupModule startup = StartupModule.create(ASMClasspathScanner.class,
-			PackageFilter.create(TwitterPublisher.class));
+			PackageFilter.create(Publisher.class));
 		startup.addFeature(ConfigurationFeature.class);
 		Injector injector = Guice.createInjector(startup);
 		
-		TwitterPublisher publisher = injector.getInstance(TwitterPublisher.class);
+		Publisher publisher = injector.getInstance(Publisher.class);
 		publisher.tweet();
 	}
 }

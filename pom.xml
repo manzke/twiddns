@@ -67,7 +67,7 @@
 					<archive>
 						<manifest>
 							<addClasspath>true</addClasspath>
-							<mainClass>de.devsurf.twiddns.TwitterPublisher</mainClass>
+							<mainClass>de.devsurf.twiddns.Publisher</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>

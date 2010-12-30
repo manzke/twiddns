@@ -1,7 +1,13 @@
 package de.devsurf.fakeddns.twitter;
 
+import java.awt.Desktop;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URI;
+import java.util.Properties;
 
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -22,6 +28,11 @@ public class Main {
 		while (null == accessToken) {
 			System.out.println("Open the following URL and grant access to your account:");
 			System.out.println(requestToken.getAuthorizationURL());
+			Desktop desktop = Desktop.getDesktop();
+			if(desktop != null){
+				desktop.browse(new URI(requestToken.getAuthorizationURL()));	
+			}
+			
 			System.out.print("Enter the PIN(if aviailable) or just hit enter.[PIN]:");
 			String pin = br.readLine();
 			try{
@@ -43,8 +54,14 @@ public class Main {
 		System.exit(0);
 	}
 	
-	private static void storeAccessToken(int useId, AccessToken accessToken){
+	private static void storeAccessToken(int useId, AccessToken accessToken) throws IOException{
 		System.out.println("access token:" + accessToken.getToken());
 		System.out.println("access token secret:" + accessToken.getTokenSecret());
+		
+		Properties properties = new Properties();
+		properties.setProperty("private.key", accessToken.getToken());
+		properties.setProperty("private.secret", accessToken.getTokenSecret());
+		
+		properties.store(new FileOutputStream(new File("configuration.properties")), "");
 	}
 }
