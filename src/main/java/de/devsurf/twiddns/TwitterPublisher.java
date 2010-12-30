@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
 import twitter4j.AsyncTwitter;
@@ -18,7 +19,6 @@ import twitter4j.http.AccessToken;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-import com.google.inject.name.Named;
 
 import de.devsurf.injection.guice.configuration.Configuration;
 import de.devsurf.injection.guice.configuration.PathConfig;
@@ -37,8 +37,7 @@ public class TwitterPublisher {
 
 	private static final SimpleDateFormat FORMATTER = new SimpleDateFormat("HH:mm:ss");
 	
-	@Inject(optional=true) @Named("shutdown.timeout")
-	private int timeOut = 2000;
+	private AtomicInteger counter = new AtomicInteger();
 	
 	private List<Tweeter> tweeters = new ArrayList<Tweeter>();
 	private AccessToken token;
@@ -47,11 +46,13 @@ public class TwitterPublisher {
 		@Override
 		public void onException(TwitterException e, TwitterMethod method) {
 			LOGGER.warning("Exception updating Twitter status: " + e.toString()+" Twitter says it is: "+e.getMessage());
+			counter.decrementAndGet();
 		}
 
 		@Override
 		public void updatedStatus(Status statuses) {
 			LOGGER.info("Updated Twitter status: " + statuses.getText());
+			counter.decrementAndGet();
 		}
 	});
 	
@@ -65,9 +66,15 @@ public class TwitterPublisher {
 	public void tweet() throws Exception{
 		AsyncTwitter twitter =  factory.getOAuthAuthorizedInstance(CONSUMER_KEY, CONSUMER_SECRET, token);
 		for(Tweeter tweeter : tweeters){
-			twitter.updateStatus(FORMATTER.format(new Date())+" - "+tweeter.tweet());
+			List<String> tweets = tweeter.tweet();
+			for(String tweet : tweets){
+				twitter.updateStatus(FORMATTER.format(new Date())+" - "+tweet);	
+				counter.incrementAndGet();
+			}
 		}
-		Thread.sleep(timeOut);	
+		while(counter.get() > 0){
+			Thread.sleep(1000);
+		}
 		twitter.shutdown();
 	}
 	

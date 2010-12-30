@@ -1,6 +1,8 @@
 package de.devsurf.twiddns.tweets;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -15,16 +17,16 @@ public class WieIstMeineIP implements Tweeter{
 	private static final Logger LOGGER = Logger.getLogger(WieIstMeineIP.class.getName());
 	private static final String H_CLASS_IP = "<h1 class=\"ip\">";
 	
-	public String tweet() throws IOException {
+	public List<String> tweet() throws IOException {
 		try {
-			return _tweet();
+			return Collections.singletonList(getOwnIP());
 		} catch (IOException ioe) {
 			LOGGER.log(Level.WARNING, ioe.getMessage(), ioe);
 			throw ioe;
 		}
 	}
 	
-	private String _tweet() throws IOException {
+	protected String getOwnIP() throws IOException {
 		HttpClient client = new HttpClient();
 		GetMethod gm = new GetMethod("http://www.wieistmeineip.de/");
 

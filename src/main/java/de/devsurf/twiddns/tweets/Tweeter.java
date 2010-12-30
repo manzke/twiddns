@@ -1,9 +1,10 @@
 package de.devsurf.twiddns.tweets;
 
 import java.io.IOException;
+import java.util.List;
 
 public interface Tweeter {
-	String tweet() throws IOException;
+	List<String> tweet() throws IOException;
 	CronFormat schedule();
 	
 	public static class CronFormat{
