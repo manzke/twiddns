@@ -1,4 +1,4 @@
-package de.devsurf.twiddns;
+package de.devsurf.twiddns.connect;
 
 import twitter4j.http.AccessToken;
 

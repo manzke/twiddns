@@ -27,7 +27,7 @@ import de.devsurf.injection.guice.configuration.features.ConfigurationFeature;
 import de.devsurf.injection.guice.scanner.PackageFilter;
 import de.devsurf.injection.guice.scanner.StartupModule;
 import de.devsurf.injection.guice.scanner.asm.ASMClasspathScanner;
-import de.devsurf.twiddns.tweets.Tweeter;
+import de.devsurf.twiddns.connect.AccessTokenProvider;
 
 @Configuration(location=@PathConfig("/configuration.properties"), type=Type.VALUES)
 public class TwitterPublisher {
@@ -79,7 +79,7 @@ public class TwitterPublisher {
 	
 	public static void main(String[] args) throws Exception {
 		StartupModule startup = StartupModule.create(ASMClasspathScanner.class,
-			PackageFilter.create("de.devsurf.twiddns"));
+			PackageFilter.create(TwitterPublisher.class));
 		startup.addFeature(ConfigurationFeature.class);
 		Injector injector = Guice.createInjector(startup);
 		

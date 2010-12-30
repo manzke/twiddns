@@ -1,4 +1,4 @@
-package de.devsurf.twiddns.tweets;
+package de.devsurf.twiddns;
 
 import java.io.IOException;
 import java.util.List;

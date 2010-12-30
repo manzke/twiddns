@@ -7,6 +7,7 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 
 import de.devsurf.injection.guice.annotations.Bind;
+import de.devsurf.twiddns.SingleTweeter;
 
 @Bind(multiple=true)
 public class WieIstMeineIP extends SingleTweeter{
