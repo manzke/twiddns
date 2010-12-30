@@ -38,7 +38,6 @@ public class TwitterPublisher {
 	private static final SimpleDateFormat FORMATTER = new SimpleDateFormat("HH:mm:ss");
 	
 	private AtomicInteger counter = new AtomicInteger();
-	
 	private List<Tweeter> tweeters = new ArrayList<Tweeter>();
 	private AccessToken token;
 	
