@@ -32,8 +32,8 @@ import de.devsurf.twiddns.connect.AccessTokenProvider;
 @Configuration(location=@PathConfig("/configuration.properties"), alternative=@PathConfig("/configuration.override.properties"), type=Type.VALUES)
 public class Publisher {
 	private static final Logger LOGGER = Logger.getLogger(Publisher.class.getName());
-	private static final String CONSUMER_KEY = "sYMke2xPv6YWlP6O0TUeg";
-	private static final String CONSUMER_SECRET = "CQbjmMw3EtCKxzzXZeqdPCVWDQoBETxJlusTu0hEAs";
+	private static final String CONSUMER_KEY = "{replace with key}";
+	private static final String CONSUMER_SECRET = "{replace with key}";
 
 	private static final SimpleDateFormat FORMATTER = new SimpleDateFormat("HH:mm:ss");
 	
